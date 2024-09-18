@@ -5,6 +5,7 @@
 #ifndef NALU_H
 #define NALU_H
 #include <cstdint>
+#include <cstddef>
 
 class Nalu {
   uint8_t startCodeLen;

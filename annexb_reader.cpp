@@ -6,14 +6,12 @@
 #include <cassert>
 #include <cstring>
 
-#define READ_LEN (1024*2)
+#define READ_LEN (1024*20)
 #define BUF_REMAIN_THRESHOLD 200
 
 // for static
-uint8_t AnnexbReader::startcode1[3] = {0x00,0x00,0x01};
-uint8_t AnnexbReader::startcode2[4] = {0x00,0x00,0x00,0x01};
-std::boyer_moore_searcher<uint8_t*> AnnexbReader::startCodeSearcher1(startcode1, startcode1+3);
-std::boyer_moore_searcher<uint8_t*> AnnexbReader::startCodeSearcher2(startcode2, startcode2+4);
+uint8_t AnnexbReader::startcodep[2] = {0x00,0x00};
+std::boyer_moore_searcher<uint8_t*> AnnexbReader::startCodePSearcher(startcodep, startcodep+2);
 
 void AnnexbReader::readToBuffer() {
   uint32_t readlen = READ_LEN;
@@ -38,8 +36,45 @@ void AnnexbReader::readToBuffer() {
   }
   // update buffer
   buf = newBuf;
-  bufLen = bufLeft + readlen;
+  bufLen = bufLeft + readedLen;
   nowBufAt = 0;
+}
+
+/*
+ * 返回一个pair，如果找到了start code，返回start code的位置和长度
+ * 如果没有找到，返回nullptr和下一次寻找的起始位置，即start+returned_pair[1]的位置
+ */
+std::pair<uint8_t*, uint32_t> AnnexbReader::findStartCode(uint8_t* start, uint8_t* end) {
+  auto begin = start;
+  uint8_t nextStartCodeLen=0;
+  while(true) {
+    uint8_t* nextStart = std::search(begin, end, startCodePSearcher);
+    if (nextStart == end) {
+      // 此时说明连两个连续的0都没有找到，说明在此buffer中没有start code，但是如果现在最后一个字节是0x00，这个0x00可能是start code的一部分
+      if (*(nextStart-1)==0x00) {
+        return {nullptr,end - start -1};
+      }
+      return {nullptr,end - start};
+    }
+    if (nextStart+2==end) {
+      // 此时说明，两个0正好位于buffer的最后两个字节
+      return {nullptr,end - start -2};
+    }
+    if (nextStart[2] == 1) {
+      return {nextStart, 3};
+    }
+    if (nextStart[2] == 0) {
+      if (nextStart + 3 == end) {
+        return {nullptr,end - start -3};
+      }
+      if (nextStart[3] == 1) return {nextStart, 4};
+      // 到这里说明出现000X的情况，则继续找
+      begin = nextStart + 4;
+      continue;
+    }
+    // 到这里说明出现了00X的情况，则继续找
+    begin = nextStart + 3;
+  }
 }
 
 uint8_t AnnexbReader::getStartCodeLen(uint8_t* buffer) {
@@ -94,32 +129,37 @@ std::optional<Nalu> AnnexbReader::getNalu() {
     }
     // 获取start code的长度
     uint8_t startCodeLen = nowStartCodeLen==0 ? getStartCodeLen(start) : nowStartCodeLen;
+    if (!startCodeLen) return std::nullopt;
     // 开始寻找下一个start code
+    // skip是从start开始的跳跃数
     size_t skip = searchNextStartFrom==0 ? startCodeLen : searchNextStartFrom;
-    uint8_t* nextStart = std::search(start + skip, buf + bufLen, startCodeSearcher1);
-    uint8_t nextStartCodeLen;
-    if (nextStart == buf + bufLen) {
-      // 尝试第二个searcher
-      nextStart = std::search(start + skip, buf + bufLen, startCodeSearcher2);
-      if (nextStart == buf + bufLen){
-        // 即在已有的buffer中未找到start code
-        // 记录现在的start code长度
-        nowStartCodeLen = startCodeLen;
-        searchNextStartFrom = bufLen - nowBufAt;
-        needMore = true;
-        continue;
+
+    auto res = findStartCode(start + skip, buf + bufLen);
+
+    if (!res.first) {
+      // 如果没找到，并且已经toFileEnd, 说明已经到文件尾部
+      if (toFileEnd) {
+        // for (size_t i = nowBufAt; i < bufLen; ++i) {
+        //   // 使用 %02X 打印两位的十六进制数，不足两位时前面补0
+        //   printf("%02X ", buf[i]);
+        // }
+        size_t thisNaluLen = bufLen - nowBufAt;
+        nowBufAt = bufLen;
+        return Nalu(startCodeLen, start, thisNaluLen);
       }
-      nextStartCodeLen = 4;
-    }else {
-      nextStartCodeLen = 3;
+      // 说明未搜寻到，但是给出了res.second作为从start + skip开始的跳跃数
+      searchNextStartFrom = skip + res.second; // 下次从这个位置开始搜索，即start + searchNextStartFrom
+      nowStartCodeLen = startCodeLen;
+      needMore = true;
+      continue;
     }
     // now we get the next start code location and length
     // first get the  nalu
-    Nalu nalu(startCodeLen, start, nextStart - start);
+    Nalu nalu(startCodeLen, start, res.first - start);
     // restore nowStartCodeLen in case of next iteration
-    nowStartCodeLen = nextStartCodeLen;
+    nowStartCodeLen = res.second;
     // set nowBufAt to next start code
-    nowBufAt = nextStart - buf;
+    nowBufAt = res.first - buf;
     // reset searchNextStartFrom
     searchNextStartFrom = 0;
     // set needMore to false: because now we dont think we undoubtedly need more data, so let the next iteration decide
@@ -133,8 +173,6 @@ void AnnexbReader::close() {
   // close file
   infile.close();
   // clear buffer
-  if (buf) {
-    delete[] buf;
-    // buf = nullptr; // not necessary
-  }
+  delete[] buf; // delete nullptr has no effect
+  // buf = nullptr; // not necessary
 }

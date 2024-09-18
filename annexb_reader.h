@@ -8,15 +8,14 @@
 #include <fstream>
 #include <functional>
 #include <optional>
+#include <utility>
 
 #include "nalu.h"
 
 class AnnexbReader {
   // static
-  static uint8_t startcode1[3];
-  static uint8_t startcode2[4];
-  static std::boyer_moore_searcher<uint8_t*> startCodeSearcher1;
-  static std::boyer_moore_searcher<uint8_t*> startCodeSearcher2;
+  static uint8_t startcodep[2];
+  static std::boyer_moore_searcher<uint8_t*> startCodePSearcher;// search for two 0
   // file source
   std::string_view filename;
   std::ifstream infile;
@@ -36,6 +35,7 @@ class AnnexbReader {
   size_t searchNextStartFrom;
   // private func
   void readToBuffer();
+  std::pair<uint8_t*,uint32_t> findStartCode(uint8_t* start, uint8_t* end);
 public:
   // constructor
   explicit AnnexbReader(std::string_view filename);

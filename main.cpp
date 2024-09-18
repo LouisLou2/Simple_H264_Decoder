@@ -5,7 +5,7 @@
 #include "annexb_reader.h"
 
 int main() {
-  std::string_view h264FilePath = "sample";
+  std::string_view h264FilePath = "/home/leo/CLionProjects/h264decoder/resource/bejeweled_6s_annexb.h264";
   AnnexbReader reader(h264FilePath);
   if (!reader.open()) {
     fprintf(stderr, "Failed to open file %s\n", h264FilePath.data());
