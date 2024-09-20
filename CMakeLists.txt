@@ -7,4 +7,5 @@ add_executable(h264decoder main.cpp
     annexb_reader.cpp
     annexb_reader.h
     nalu.cpp
-    nalu.h)
+    nalu.h
+)
