@@ -12,11 +12,11 @@ buf(buf), bufLen(bufLen), byteNow(buf), bitOffset(0) {
 
 uint8_t BitStream1::readBit1() {
   uint8_t ret = (*byteNow >> (7-bitOffset)) & 1;
-  ++bitOffset;
-  if (bitOffset == 8) {
+  if(bitOffset+1==8) {
     ++byteNow;
     bitOffset = 0;
-  }
+  }else
+    ++bitOffset;
   return ret;
 }
 
@@ -35,15 +35,15 @@ uint32_t BitStream1::readBitN(uint8_t n) {
         0xffffffff >> (32 - used)
       )
       <<
-      ( 32-used-resBitFrom )
+      (32-used-resBitFrom)
       | res;
     resBitFrom += used;
     n -= used;
-    bitOffset += used;
-    if (bitOffset == 8) {
+    if(bitOffset + used == 8) {
       ++byteNow;
       bitOffset = 0;
-    }
+    }else
+      bitOffset += used;
   }
   return res;
 }
