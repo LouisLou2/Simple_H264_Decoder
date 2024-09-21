@@ -20,6 +20,9 @@ public:
   [[nodiscard]] uint8_t nal_ref_idc() const;
   [[nodiscard]] uint8_t nal_unit_type() const;
   [[nodiscard]] std::string to_string() const;
+
+  [[nodiscard]] size_t length() const { return len; }
+  [[nodiscard]] uint8_t* getData() const { return data; }
 };
 
 inline bool Nalu::forbidden_zero_bit() const {

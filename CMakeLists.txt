@@ -8,4 +8,12 @@ add_executable(h264decoder main.cpp
     annexb_reader.h
     nalu.cpp
     nalu.h
+    bitstream/bitstream1.cpp
+    bitstream/bitstream1.h
+    bitstream/bitstream.cpp
+    bitstream/bitstream.h
+    test/teat_read_nalu.h
+    test/test_read_nalu.cpp
+    test/test_bitstream.h
+    test/test_bitstream.cpp
 )

@@ -7,7 +7,7 @@
 #include <cstring>
 
 #define READ_LEN (1024*20)
-#define BUF_REMAIN_THRESHOLD 200
+#define BUF_REMAIN_THRESHOLD 512
 
 // for static
 uint8_t AnnexbReader::startcodep[2] = {0x00,0x00};
@@ -22,7 +22,7 @@ void AnnexbReader::readToBuffer() {
   infile.read(reinterpret_cast<char*>(newBuf + bufLeft), readlen);
   size_t readedLen = infile.gcount();
   if (readedLen < readlen) {
-    toFileEnd = true;// indicate that the file is end
+    toFileEnd = true;// indicate that the file reaches the end
     if(readedLen == 0) {
       // no data readed
       delete [] newBuf;
@@ -162,7 +162,7 @@ std::optional<Nalu> AnnexbReader::getNalu() {
     nowBufAt = res.first - buf;
     // reset searchNextStartFrom
     searchNextStartFrom = 0;
-    // set needMore to false: because now we dont think we undoubtedly need more data, so let the next iteration decide
+    // set needMore to false: because now we cant make sure that we need more data, so let the next iteration decide
     needMore = false;
     // return the nalu
     return nalu;
