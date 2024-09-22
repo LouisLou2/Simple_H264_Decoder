@@ -6,7 +6,7 @@
 #define TEST_BITSTREAM_H
 #include <string_view>
 
-int testBitRead(std::string_view fileName);
+// int testBitRead(std::string_view fileName);
 
 void testReadN();
 void testUESE();

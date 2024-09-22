@@ -7,12 +7,14 @@
 #include <cstdint>
 #include <fstream>
 #include <functional>
+#include <memory>
 #include <optional>
 #include <utility>
 
-#include "nalu.h"
+#include "nalu_reader.h"
+#include "../entity/nalu.h"
 
-class AnnexbReader {
+class AnnexbReader :public NaluReader{
   // file source
   std::string_view filename;
   std::ifstream infile;
@@ -32,14 +34,14 @@ class AnnexbReader {
   size_t searchNextStartFrom;
   // private func
   void readToBuffer();
-  std::pair<uint8_t*,uint32_t> findStartCode(uint8_t* start, uint8_t* end);
+  std::pair<const uint8_t*,uint32_t> findStartCode(const uint8_t* start, const uint8_t* end) const;
 public:
   // constructor
   explicit AnnexbReader(std::string_view filename);
-  static uint8_t getStartCodeLen(uint8_t*buffer);
-  bool open();
-  std::optional<Nalu> getNalu();
-  void close();
+  static uint8_t getStartCodeLen(const uint8_t*buffer);
+  bool open() override;
+  std::optional<std::unique_ptr<Nalu>> getNalu() override;
+  void close() override;
 };
 
 

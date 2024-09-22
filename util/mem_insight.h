@@ -9,7 +9,7 @@
 
 class MemInsight {
 public:
-  static void printNextNBytes(uint8_t* data, uint16_t n);
+  static void printNextNBytes(const uint8_t* data, uint16_t n);
 };
 
 

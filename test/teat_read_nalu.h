@@ -6,10 +6,10 @@
 #include <string_view>
 #include <chrono>
 
-#include "../annexb_reader.h"
+#include "../nalu_reader/annexb_reader.h"
 
 uint64_t getFileSize(const char* fileName);
 
-std::list<Nalu> getReadedNalus(std::string_view fileName);
+std::list<Nalu*> getReadedNalus(std::string_view fileName);
 
-void testRBSP(const char* fileName);
+// void testRBSP(const char* fileName);

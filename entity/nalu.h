@@ -6,30 +6,38 @@
 #define NALU_H
 #include <cstdint>
 #include <cstddef>
+#include <memory>
 #include <string_view>
 
+
+#include "../const/nal_unit_type.h"
+
+enum class NalUnitTypeEnum;
+
 class Nalu {
+  NalUnitTypeEnum nalUnitType; // 5 bits, indicating the type of the NAL unit
+  uint32_t ebspLen; // length of the EBSP
+  uint32_t rbspLen; // length of the RBSP
   uint8_t startCodeLen; // 3 or 4
   uint8_t headerByte; // headerByte except the start code part
-  uint8_t* ebsp;
-  uint32_t ebspLen;
-  // uint8_t* rbsp; // 中间产物不要吧
-  uint8_t* rbsp;
-  uint32_t rbspLen;
+  uint8_t* rbps; // RBSP, 只是暂时性的，因为一旦各种成分解析完毕，就会被删除
+
+  // func
+  static std::pair<uint8_t*, uint32_t> parseRBSP(const uint8_t* ebsp, uint32_t len);
+  void clearRBSP();
+
 public:
+  // simple factory pattern
+  static std::unique_ptr<Nalu> getNalu(uint8_t startCodeLen, uint8_t* data, size_t len);
   // cons
   Nalu(uint8_t startCodeLen, uint8_t* data, size_t len);
 
   [[nodiscard]] uint32_t getEbspLen() const { return ebspLen; }
   [[nodiscard]] uint32_t getRbspLen() const { return rbspLen; }
-  [[nodiscard]] uint8_t* getEbsp() const { return ebsp; }
-  [[nodiscard]] uint8_t* getRbsp() const { return rbsp; }
-
+  [[nodiscard]] NalUnitTypeEnum getNalUnitType() const { return nalUnitType; }
   [[nodiscard]] bool forbidden_zero_bit() const;
   [[nodiscard]] uint8_t nal_ref_idc() const;
   [[nodiscard]] uint8_t nal_unit_type() const;
-
-  void parse_RBSP_delete_EBSP();
 
   [[nodiscard]] std::string to_string() const;
   // [[nodiscard]] size_t length() const { return len; }
@@ -45,6 +53,11 @@ inline uint8_t Nalu::nal_ref_idc() const {
 
 inline uint8_t Nalu::nal_unit_type() const {
   return headerByte & 0x1f;
+}
+
+inline void Nalu::clearRBSP() {
+  delete[] rbps;
+  rbps = nullptr;
 }
 
 #endif //NALU_H
