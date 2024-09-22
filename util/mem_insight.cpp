@@ -6,7 +6,7 @@
 
 #include <cstdio>
 
-void MemInsight::printNextNBytes(uint8_t* data, uint16_t n) {
+void MemInsight::printNextNBytes(const uint8_t* data, uint16_t n) {
   if (data == nullptr) {
     printf("Error: Null pointer passed to function.\n");
     return;

@@ -6,11 +6,11 @@
 #include <cassert>
 #include <cstring>
 
-#include "util/buf_match.h"
+#include "../entity/nalu.h"
+#include "../util/buf_match.h"
 
 #define READ_LEN (1024*20)
 #define BUF_REMAIN_THRESHOLD 512
-
 
 void AnnexbReader::readToBuffer() {
   uint32_t readlen = READ_LEN;
@@ -43,11 +43,11 @@ void AnnexbReader::readToBuffer() {
  * 返回一个pair，如果找到了start code，返回start code的位置和长度
  * 如果没有找到，返回nullptr和下一次寻找的起始位置，即start+returned_pair[1]的位置
  */
-std::pair<uint8_t*, uint32_t> AnnexbReader::findStartCode(uint8_t* start, uint8_t* end) {
+std::pair<const uint8_t*, uint32_t> AnnexbReader::findStartCode(const uint8_t* start, const uint8_t* end) const{
   auto begin = start;
   uint8_t nextStartCodeLen=0;
   while(true) {
-    uint8_t* nextStart = BufMatch::match00(begin,end);
+    const uint8_t* nextStart = BufMatch::match00(begin,end);
     if (nextStart == end) {
       // 此时说明连两个连续的0都没有找到，说明在此buffer中没有start code，但是如果现在最后一个字节是0x00，这个0x00可能是start code的一部分
       if (*(nextStart-1)==0x00) {
@@ -76,7 +76,7 @@ std::pair<uint8_t*, uint32_t> AnnexbReader::findStartCode(uint8_t* start, uint8_
   }
 }
 
-uint8_t AnnexbReader::getStartCodeLen(uint8_t* buffer) {
+uint8_t AnnexbReader::getStartCodeLen(const uint8_t* buffer) {
   // 调用前保证buffer的长度至少为4
   if (buffer[0] == 0 && buffer[1] == 0) {
     if (buffer[2] == 1) {
@@ -112,7 +112,7 @@ bool AnnexbReader::open() {
  * 每次只解析一个nalu，解析完一个nalu, 把nowBufAt指向下一个nalu的开始码,
  * 可以保证一个nalu一定是从nowBufAt开始的
  */
-std::optional<Nalu> AnnexbReader::getNalu() {
+std::optional<std::unique_ptr<Nalu>> AnnexbReader::getNalu() {
   while(true) {
     // 若没有到达文件尾部，且buffer中剩余数据不足BUF_REMAIN_THRESHOLD字节，则读取新数据
     if(!toFileEnd && (needMore || bufLen - nowBufAt < BUF_REMAIN_THRESHOLD)) {
@@ -144,7 +144,7 @@ std::optional<Nalu> AnnexbReader::getNalu() {
         // }
         size_t thisNaluLen = bufLen - nowBufAt;
         nowBufAt = bufLen;
-        return Nalu(startCodeLen, start, thisNaluLen);
+        return Nalu::getNalu(startCodeLen, start, thisNaluLen);
       }
       // 说明未搜寻到，但是给出了res.second作为从start + skip开始的跳跃数
       searchNextStartFrom = skip + res.second; // 下次从这个位置开始搜索，即start + searchNextStartFrom
@@ -154,7 +154,7 @@ std::optional<Nalu> AnnexbReader::getNalu() {
     }
     // now we get the next start code location and length
     // first get the  nalu
-    Nalu nalu(startCodeLen, start, res.first - start);
+    auto nalu=Nalu::getNalu(startCodeLen, start, res.first - start);
     // restore nowStartCodeLen in case of next iteration
     nowStartCodeLen = res.second;
     // set nowBufAt to next start code
