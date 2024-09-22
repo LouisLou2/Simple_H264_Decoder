@@ -40,3 +40,10 @@ std::list<Nalu> getReadedNalus(std::string_view fileName) {
   reader.close();
   return nalus;
 }
+
+void testRBSP(const char* fileName) {
+  auto nalus = getReadedNalus(fileName);
+  for (auto &nalu : nalus) {
+    nalu.parse_RBSP_delete_EBSP();
+  }
+}

@@ -10,19 +10,29 @@
 
 class Nalu {
   uint8_t startCodeLen; // 3 or 4
-  size_t len; // the nalu length including the start code
   uint8_t headerByte; // headerByte except the start code part
-  uint8_t* data; // whole data buf
+  uint8_t* ebsp;
+  uint32_t ebspLen;
+  // uint8_t* rbsp; // 中间产物不要吧
+  uint8_t* rbsp;
+  uint32_t rbspLen;
 public:
   // cons
   Nalu(uint8_t startCodeLen, uint8_t* data, size_t len);
+
+  [[nodiscard]] uint32_t getEbspLen() const { return ebspLen; }
+  [[nodiscard]] uint32_t getRbspLen() const { return rbspLen; }
+  [[nodiscard]] uint8_t* getEbsp() const { return ebsp; }
+  [[nodiscard]] uint8_t* getRbsp() const { return rbsp; }
+
   [[nodiscard]] bool forbidden_zero_bit() const;
   [[nodiscard]] uint8_t nal_ref_idc() const;
   [[nodiscard]] uint8_t nal_unit_type() const;
-  [[nodiscard]] std::string to_string() const;
 
-  [[nodiscard]] size_t length() const { return len; }
-  [[nodiscard]] uint8_t* getData() const { return data; }
+  void parse_RBSP_delete_EBSP();
+
+  [[nodiscard]] std::string to_string() const;
+  // [[nodiscard]] size_t length() const { return len; }
 };
 
 inline bool Nalu::forbidden_zero_bit() const {

@@ -6,12 +6,11 @@
 #include <cassert>
 #include <cstring>
 
+#include "util/buf_match.h"
+
 #define READ_LEN (1024*20)
 #define BUF_REMAIN_THRESHOLD 512
 
-// for static
-uint8_t AnnexbReader::startcodep[2] = {0x00,0x00};
-std::boyer_moore_searcher<uint8_t*> AnnexbReader::startCodePSearcher(startcodep, startcodep+2);
 
 void AnnexbReader::readToBuffer() {
   uint32_t readlen = READ_LEN;
@@ -48,7 +47,7 @@ std::pair<uint8_t*, uint32_t> AnnexbReader::findStartCode(uint8_t* start, uint8_
   auto begin = start;
   uint8_t nextStartCodeLen=0;
   while(true) {
-    uint8_t* nextStart = std::search(begin, end, startCodePSearcher);
+    uint8_t* nextStart = BufMatch::match00(begin,end);
     if (nextStart == end) {
       // 此时说明连两个连续的0都没有找到，说明在此buffer中没有start code，但是如果现在最后一个字节是0x00，这个0x00可能是start code的一部分
       if (*(nextStart-1)==0x00) {

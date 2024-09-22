@@ -16,4 +16,8 @@ add_executable(h264decoder main.cpp
     test/test_read_nalu.cpp
     test/test_bitstream.h
     test/test_bitstream.cpp
+    util/buf_match.cpp
+    util/buf_match.h
+    util/mem_insight.cpp
+    util/mem_insight.h
 )

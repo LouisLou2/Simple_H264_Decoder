@@ -14,8 +14,8 @@ int testBitRead(std::string_view fileName) {
   auto begin = std::chrono::high_resolution_clock::now();
   BitStream1 bs1(nullptr, 0);
   for (const auto &nalu : nalus) {
-    bs1.resetBuffer(nalu.getData(), nalu.length());
-    for (uint32_t i = 0; i < nalu.length() * 8; ++i) {
+    bs1.resetBuffer(nalu.getEbsp(), nalu.getEbspLen());
+    for (uint32_t i = 0; i < nalu.getEbspLen() * 8; ++i) {
       bs1.readBit1();
     }
   }
@@ -27,8 +27,8 @@ int testBitRead(std::string_view fileName) {
   begin = std::chrono::high_resolution_clock::now();
   uint8_t sizes[10]={2,5,7,13,17,19,23,29,31,32};
   for (const auto &nalu : nalus) {
-    bs1.resetBuffer(nalu.getData(), nalu.length());
-    size_t bitsLeft = nalu.length() * 8;
+    bs1.resetBuffer(nalu.getEbsp(), nalu.getEbspLen());
+    size_t bitsLeft = nalu.getEbspLen() * 8;
     uint32_t i=0;
     while(true){
       auto size = sizes[i++ % 10];
@@ -49,5 +49,12 @@ void testReadN() {
   BitStream1 bs1(buf, 8);
   for(uint8_t i=0;i<0x03;++i) bs1.readBit1();
   uint32_t res = bs1.readBitN(31);
+  printf("res: %d\n", res);
+}
+
+void testUESE() {
+  uint8_t buf[8]={0b00001111, 0b11010101, 0b10101010, 0b01010101, 0b10101010, 0b01010101, 0b10101010, 0b01010101};
+  BitStream1 bs1(buf, 8);
+  auto res=bs1.readSE();
   printf("res: %d\n", res);
 }

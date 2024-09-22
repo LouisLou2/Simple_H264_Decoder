@@ -13,9 +13,6 @@
 #include "nalu.h"
 
 class AnnexbReader {
-  // static
-  static uint8_t startcodep[2];
-  static std::boyer_moore_searcher<uint8_t*> startCodePSearcher;// search for two 0
   // file source
   std::string_view filename;
   std::ifstream infile;

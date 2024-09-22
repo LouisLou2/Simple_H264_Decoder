@@ -9,5 +9,5 @@
 int testBitRead(std::string_view fileName);
 
 void testReadN();
-
+void testUESE();
 #endif //TEST_BITSTREAM_H
