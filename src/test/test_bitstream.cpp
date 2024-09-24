@@ -4,7 +4,7 @@
 
 #include "test/test_bitstream.h"
 #include "test/teat_read_nalu.h"
-#include "bitstream/bitstream1.h"
+#include "util/bitstream/bitstream1.h"
 
 // int testBitRead(std::string_view fileName) {
 //   auto totalByte = getFileSize(fileName.data());

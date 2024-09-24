@@ -14,9 +14,9 @@ add_executable(h264decoder main.cpp
     ${PROJ_RELATE_INCLUDE_DIR}/codec/nalu_reader/annexb_reader.h
     ${PROJ_RELATE_SRC_DIR}/entity/nalu/nalu.cpp
     ${PROJ_RELATE_INCLUDE_DIR}/entity/nalu/nalu.h
-    ${PROJ_RELATE_SRC_DIR}/bitstream/bitstream1.cpp
-    ${PROJ_RELATE_INCLUDE_DIR}/bitstream/bitstream1.h
-    ${PROJ_RELATE_INCLUDE_DIR}/bitstream/bitstream.h
+    ${PROJ_RELATE_SRC_DIR}/util/bitstream/bitstream1.cpp
+    ${PROJ_RELATE_INCLUDE_DIR}/util/bitstream/bitstream1.h
+    ${PROJ_RELATE_INCLUDE_DIR}/util/bitstream/bitstream.h
     ${PROJ_RELATE_INCLUDE_DIR}/test/teat_read_nalu.h
     ${PROJ_RELATE_SRC_DIR}/test/test_read_nalu.cpp
     ${PROJ_RELATE_INCLUDE_DIR}/test/test_bitstream.h
@@ -57,4 +57,7 @@ add_executable(h264decoder main.cpp
     include/entity/nalu/nalu_header.h
     src/entity/test_nalu.cpp
     include/entity/test_nalu.h
+    src/entity/nalu/aud_nalu.cpp
+    include/entity/nalu/aud_nalu.h
+    include/util/bit_util.h
 )

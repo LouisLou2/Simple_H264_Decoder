@@ -32,7 +32,7 @@ std::list<Nalu*> getReadedNalus(std::string_view fileName) {
   auto begin = std::chrono::high_resolution_clock::now();
   for (auto nalu = reader.getNalu(); nalu.has_value(); nalu = reader.getNalu()) {
     nalus.push_back(nalu.value().release());
-    // printf("%s\n", nalu.value().to_string().c_str());
+    printf("%s\n", nalus.back()->to_string().c_str());
   }
   // end time
   auto end = std::chrono::high_resolution_clock::now();

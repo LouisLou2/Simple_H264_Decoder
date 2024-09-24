@@ -5,7 +5,7 @@
 #include <array>
 #include <cstdint>
 
-#include "bitstream/bitstream.h"
+#include "util/bitstream/bitstream.h"
 
 class HRD_PS {
   uint8_t cpb_cnt_minus1; // 0-31

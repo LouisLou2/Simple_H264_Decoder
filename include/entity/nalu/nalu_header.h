@@ -9,13 +9,13 @@
 #include "entity/nuh_3davc_ext.h"
 #include "entity/nuh_mvc_ext.h"
 #include "entity/nuh_svc_ext.h"
-#include "bitstream/bitstream.h"
+#include "util/bitstream/bitstream.h"
 #include "const/nal_unit_type.h"
 
-class Nalu;
 
 struct NaluHeader {
   friend class Nalu;
+  friend class AUDNalu;
 private:
   bool forbidden_zero_bit;
   int8_t nal_ref_idc;

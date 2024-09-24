@@ -23,8 +23,8 @@ protected:
   // func
   void clearRBSPBuffer();
   // cons
-  // 这里的data是不包括start code的
-  Nalu(uint8_t startCodeLen, uint8_t* data, size_t len);
+  // 这里的data是不包括start code的, 当传入needParseRBSP为false时，不会进行EBSP到RBSP的转换, 所以rbsp和rbspLen都是不可使用的
+  Nalu(uint8_t startCodeLen, uint8_t* data, size_t len, bool needParseRBSP = true);
   Nalu() = default; // TODO: for the convenience of testing, it should be removed in the future
 public:
   static std::array<uint8_t,13> specialProfileIdcs;

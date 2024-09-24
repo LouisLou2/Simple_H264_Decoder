@@ -6,7 +6,7 @@
 #define NNH_SVC_EXT_H
 #include <cstdint>
 
-#include "bitstream/bitstream.h"
+#include "util/bitstream/bitstream.h"
 
 
 // nal_unit_svc_extension

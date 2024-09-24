@@ -8,7 +8,7 @@
 
 #include "nalu.h"
 #include "entity/vui_parameters.h"
-#include "bitstream/bitstream.h"
+#include "util/bitstream/bitstream.h"
 #include "const/chroma_format.h"
 
 class SPSNalu : public Nalu {

@@ -2,7 +2,7 @@
 // Created by leo on 24-9-21.
 //
 
-#include "bitstream/bitstream1.h"
+#include "util/bitstream/bitstream1.h"
 
 #include <cassert>
 
@@ -74,6 +74,7 @@ void BitStream1::reset(uint8_t* buf, uint32_t bufLen) {
   byteNow = buf;
   bitOffset = 0;
 }
+
 uint32_t BitStream1::readUE() {
   uint32_t leadingZeroBits = 0;
   while (readBit1() == 0) ++leadingZeroBits;
@@ -81,7 +82,6 @@ uint32_t BitStream1::readUE() {
   assert (leadingZeroBits < 32);
   return (1 << leadingZeroBits) - 1 + readBitN(leadingZeroBits);
 }
-
 
 int32_t BitStream1::readSE() {
   uint32_t ue = readUE();

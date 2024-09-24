@@ -3,13 +3,14 @@
 //
 
 #include "entity/nalu/nalu.h"
-#include <string>
 
-#include "bitstream/bitstream1.h"
+#include "util/bitstream/bitstream1.h"
 #include "entity/nalu/sps_nalu.h"
 #include "codec/data_filter.h"
 #include "entity/test_nalu.h"
+#include "entity/nalu/aud_nalu.h"
 #include "util/buf_match.h"
+#include "util/mem_insight.h"
 // #include "../util/mem_insight.h"
 
 // static
@@ -17,12 +18,14 @@ std::array<uint8_t,13> Nalu::specialProfileIdcs = {
   100, 110, 122, 244, 44, 83, 86, 118, 128, 138, 139, 134, 135
 }; // baware: 这些顺序是按照标准的顺序来的，他们的出现可能性依次递减， 所以不要将他们有序然后二分， 反而是顺序查找更快
 
-Nalu::Nalu(uint8_t startCodeLen, uint8_t* data, size_t len):
+
+Nalu::Nalu(uint8_t startCodeLen, uint8_t* data, size_t len, bool needParseRBSP):
 startCodeLen(startCodeLen){
   auto bs1 = BitStream1(data, len);
   BitStream& bs = bs1;
   naluHeader = NaluHeader(bs);
   // 负责将data中的EBSP转换为RBSP
+  if (!needParseRBSP) return;
   auto rbspPair = DataFilter::EBSP_to_RBSP(
     data + naluHeader.nuhBytes,
     len - naluHeader.nuhBytes
@@ -40,7 +43,9 @@ std::unique_ptr<Nalu> Nalu::getNalu(uint8_t startCodeLen, uint8_t* data, size_t 
   switch (nalUnitType) {
   case NalUnitTypeEnum::SPS:
      return std::make_unique<SPSNalu>(startCodeLen, data, len);
-   default:
+  case NalUnitTypeEnum::AUD:
+    return std::make_unique<AUDNalu>(startCodeLen, data, len);
+  default:
      return std::make_unique<TestNalu>();
   }
 }

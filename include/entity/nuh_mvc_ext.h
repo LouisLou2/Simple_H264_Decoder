@@ -6,7 +6,7 @@
 #define NUH_MVC_EXT_H
 #include <cstdint>
 
-#include "bitstream/bitstream.h"
+#include "util/bitstream/bitstream.h"
 
 
 struct NUH_MVC_Ext {

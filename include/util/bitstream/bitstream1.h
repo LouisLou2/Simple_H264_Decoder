@@ -12,6 +12,9 @@ class BitStream1 final : public BitStream{
   uint8_t* byteNow;
   uint8_t bitOffset;
 public:
+  // get now bitstream state
+  uint8_t getBitOffset() override{return bitOffset;}
+  uint32_t getByteOffset() override{return byteNow - buf;}
   BitStream1(uint8_t* buf, uint32_t bufLen);
   // 从buf中读取一个比特
   uint8_t readBit1() override;
@@ -27,8 +30,14 @@ public:
   uint32_t readUE() override;
   // 有符号指数哥伦布编码
   int32_t readSE() override;
+
+  inline void skipThisByteLeft() override;
 };
 
+inline void BitStream1::skipThisByteLeft() {
+  bitOffset = 0;
+  ++byteNow;
+}
 
 
 #endif //BITSTREAM1_H

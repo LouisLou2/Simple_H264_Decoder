@@ -3,7 +3,7 @@
 //
 #include <algorithm>
 #include "entity/nalu/sps_nalu.h"
-#include "bitstream/bitstream1.h"
+#include "util/bitstream/bitstream1.h"
 #include "const/h264_level_map.h"
 
 // static
@@ -108,6 +108,8 @@ SPSNalu::SPSNalu(uint8_t startCodeLen, uint8_t* data, uint32_t size) : Nalu(star
     );
     vui_parameters = VUIParameters(bs, profile_idc, constraint_set3_flag, MaxDpbFrames);
   }
+  // 解析完成后，将rbsp中的数据清空
+  clearRBSPBuffer();
 }
 
 std::string SPSNalu::to_string() const {

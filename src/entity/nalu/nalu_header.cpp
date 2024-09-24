@@ -9,6 +9,7 @@ NaluHeader::NaluHeader(BitStream& bs) {
   nal_ref_idc = bs.readBitN(2);
   uint8_t nal_unit_type = bs.readBitN(5);
   nal_unit_type_enum = NalUnitTypeUtil::getNalUnitType(nal_unit_type);
+  nuhBytes = 1;
   if (nal_unit_type == 14 || nal_unit_type == 20 ||
     nal_unit_type == 21) {
     if (nal_unit_type!= 21) {
