@@ -12,8 +12,8 @@ set(PROJ_RELATE_SRC_DIR "src")
 add_executable(h264decoder main.cpp
     ${PROJ_RELATE_SRC_DIR}/codec/nalu_reader/annexb_reader.cpp
     ${PROJ_RELATE_INCLUDE_DIR}/codec/nalu_reader/annexb_reader.h
-    ${PROJ_RELATE_SRC_DIR}/entity/nalu.cpp
-    ${PROJ_RELATE_INCLUDE_DIR}/entity/nalu.h
+    ${PROJ_RELATE_SRC_DIR}/entity/nalu/nalu.cpp
+    ${PROJ_RELATE_INCLUDE_DIR}/entity/nalu/nalu.h
     ${PROJ_RELATE_SRC_DIR}/bitstream/bitstream1.cpp
     ${PROJ_RELATE_INCLUDE_DIR}/bitstream/bitstream1.h
     ${PROJ_RELATE_INCLUDE_DIR}/bitstream/bitstream.h
@@ -26,8 +26,8 @@ add_executable(h264decoder main.cpp
     ${PROJ_RELATE_SRC_DIR}/util/mem_insight.cpp
     ${PROJ_RELATE_INCLUDE_DIR}/util/mem_insight.h
     ${PROJ_RELATE_INCLUDE_DIR}/codec/nalu_reader/nalu_reader.h
-    ${PROJ_RELATE_SRC_DIR}/entity/sps_nalu.cpp
-    ${PROJ_RELATE_INCLUDE_DIR}/entity/sps_nalu.h
+    ${PROJ_RELATE_SRC_DIR}/entity/nalu/sps_nalu.cpp
+    ${PROJ_RELATE_INCLUDE_DIR}/entity/nalu/sps_nalu.h
     ${PROJ_RELATE_SRC_DIR}/const/nal_unit_type.cpp
     ${PROJ_RELATE_INCLUDE_DIR}/const/nal_unit_type.h
     ${PROJ_RELATE_SRC_DIR}/codec/data_filter.cpp
@@ -47,4 +47,14 @@ add_executable(h264decoder main.cpp
     src/entity/level_limits.cpp
     include/entity/level_limits.h
     src/const/h264_level_map.cpp
+    src/entity/nuh_svc_ext.cpp
+    include/entity/nuh_svc_ext.h
+    src/entity/nuh_3davc_ext.cpp
+    include/entity/nuh_3davc_ext.h
+    src/entity/nuh_mvc_ext.cpp
+    include/entity/nuh_mvc_ext.h
+    src/entity/nalu/nalu_header.cpp
+    include/entity/nalu/nalu_header.h
+    src/entity/test_nalu.cpp
+    include/entity/test_nalu.h
 )

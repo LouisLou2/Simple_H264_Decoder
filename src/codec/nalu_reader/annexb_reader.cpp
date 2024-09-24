@@ -6,7 +6,7 @@
 #include <cassert>
 #include <cstring>
 
-#include "entity/nalu.h"
+#include "entity/nalu/nalu.h"
 #include "util/buf_match.h"
 
 #define READ_LEN (1024*20)
@@ -141,7 +141,7 @@ std::optional<std::unique_ptr<Nalu>> AnnexbReader::getNalu() {
         // }
         size_t thisNaluLen = bufLen - nowBufAt;
         nowBufAt = bufLen;
-        return Nalu::getNalu(startCodeLen, start, thisNaluLen);
+        return Nalu::getNalu(startCodeLen, start + startCodeLen, thisNaluLen - startCodeLen);
       }
       // 说明未搜寻到，但是给出了res.second作为从start + skip开始的跳跃数
       searchNextStartFrom = skip + res.second; // 下次从这个位置开始搜索，即start + searchNextStartFrom
@@ -151,7 +151,7 @@ std::optional<std::unique_ptr<Nalu>> AnnexbReader::getNalu() {
     }
     // now we get the next start code location and length
     // first get the  nalu
-    auto nalu=Nalu::getNalu(startCodeLen, start, res.first - start);
+    auto nalu=Nalu::getNalu(startCodeLen, start + startCodeLen, res.first - start - startCodeLen);
     // restore nowStartCodeLen in case of next iteration
     nowStartCodeLen = res.second;
     // set nowBufAt to next start code

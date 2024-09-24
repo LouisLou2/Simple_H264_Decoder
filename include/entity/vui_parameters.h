@@ -51,7 +51,7 @@ class VUIParameters {
   uint32_t max_dec_frame_buffering;
 
 public:
-  VUIParameters(BitStream&bs,uint8_t profile_idc,  bool constraint_set3_flag, uint8_t MaxDpbFrames);
+  VUIParameters(BitStream&bs, uint8_t profile_idc,  bool constraint_set3_flag, uint8_t MaxDpbFrames);
   VUIParameters() = default;
 };
 

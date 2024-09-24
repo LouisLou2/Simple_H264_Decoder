@@ -11,6 +11,7 @@
 
 class H264LevelMap {
   static std::map<uint8_t, LevelLimits> levelMap;
+public:
   inline static uint32_t getMaxDpbMbs(uint8_t level);
 };
 

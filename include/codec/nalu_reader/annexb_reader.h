@@ -12,7 +12,7 @@
 #include <utility>
 
 #include "nalu_reader.h"
-#include "entity/nalu.h"
+#include "entity/nalu/nalu.h"
 
 class AnnexbReader :public NaluReader{
   // file source

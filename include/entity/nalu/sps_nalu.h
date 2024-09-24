@@ -7,7 +7,7 @@
 #include <array>
 
 #include "nalu.h"
-#include "vui_parameters.h"
+#include "entity/vui_parameters.h"
 #include "bitstream/bitstream.h"
 #include "const/chroma_format.h"
 
@@ -24,13 +24,13 @@ class SPSNalu : public Nalu {
   bool constraint_set3_flag;
   bool constraint_set4_flag;
   bool constraint_set5_flag;
-  uint8_t reserved_zero_2bits [2];
+  uint8_t reserved_zero_2bits;
   uint8_t level_idc; // 级别
   uint8_t seq_parameter_set_id; // 序列参数集的唯一标识符， 0-31
 
   // 色度格式: yuv格式
   ChromaFormat chroma_format = ChromaFormat::YUV420;
-  bool residual_colour_transform_flag = false;
+  bool separate_colour_plane_flag = false;
   uint8_t bit_depth_luma_minus8 = 0; // 0-6
   uint8_t bit_depth_chroma_minus8 = 0; // 0-6
   bool qpprime_y_zero_transform_bypass_flag = false;
@@ -40,12 +40,12 @@ class SPSNalu : public Nalu {
    */
   bool seq_scaling_matrix_present_flag = false;
   // scaling_list_present_flag[ i ] 为true时，表示第i个scaling list的值是有效的
-  bool scaling_list_present_flag[12] = {false};
+  bool seq_scaling_list_present_flag[12] = {false};
 
-  uint8_t ScalingList4x4[6][16];
-  uint8_t ScalingList8x8[6][64];
-  bool UseDefaultScalingMatrix4x4Flag[6];
-  bool UseDefaultScalingMatrix8x8Flag[6];
+  uint8_t ScalingList4x4[6][16]{};
+  uint8_t ScalingList8x8[6][64]{};
+  bool UseDefaultScalingMatrix4x4Flag[6]{};
+  bool UseDefaultScalingMatrix8x8Flag[6]{};
 
   uint8_t log2_max_frame_num_minus4;// 0-12
   uint8_t pic_order_cnt_type; // 0-2
@@ -58,7 +58,7 @@ class SPSNalu : public Nalu {
   int32_t offset_for_top_to_bottom_field = 0; // -2^31+1 ~ 2^31-1
   uint8_t num_ref_frames_in_pic_order_cnt_cycle = 0;// 0-255
 
-  std::array<int32_t, 256> offset_for_ref_frame;
+  std::array<int32_t, 256> offset_for_ref_frame{};
 
   uint32_t max_num_ref_frames;
   bool gaps_in_frame_num_value_allowed_flag;
@@ -83,7 +83,9 @@ class SPSNalu : public Nalu {
   static void scaling_list(BitStream& bs, uint8_t* scalingList, uint8_t sizeOfScalingList, bool& useDefaultScalingMatrixFlag);
 
 public:
+  // 这里的data是不包括start code的
   SPSNalu(uint8_t startCodeLen, uint8_t* data, uint32_t size);
+  [[nodiscard]] std::string to_string() const override;
 };
 
 

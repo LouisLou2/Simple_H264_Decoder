@@ -22,8 +22,7 @@ public:
   // 回退n个比特
   void backwardN(uint8_t n) override;
   // 重置buf
-  void resetBuffer(uint8_t* buf, uint32_t bufLen) override;
-
+  void reset(uint8_t* buf, uint32_t bufLen) override;
   // 无符号指数哥伦布编码
   uint32_t readUE() override;
   // 有符号指数哥伦布编码

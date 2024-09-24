@@ -16,7 +16,15 @@ struct LevelLimits {
   const uint32_t minCR;
   const uint32_t maxMvsPer2Mb;
 
-  LevelLimits(uint32_t maxMBPS, uint32_t maxFS, uint32_t maxDpbMbs, uint32_t maxBR, uint32_t maxCPB, uint32_t maxVmvR, uint32_t minCR, uint32_t maxMvsPer2Mb);
+  LevelLimits(
+    uint32_t maxMBPS,
+    uint32_t maxFS,
+    uint32_t maxDpbMbs,
+    uint32_t maxBR,
+    uint32_t maxCPB,
+    uint32_t maxVmvR,
+    uint32_t minCR,
+    uint32_t maxMvsPer2Mb);
 };
 
 

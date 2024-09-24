@@ -6,7 +6,7 @@
 #define NALU_READER_H
 #include <memory>
 #include <optional>
-#include "entity/nalu.h"
+#include "entity/nalu/nalu.h"
 
 class NaluReader {
 public:

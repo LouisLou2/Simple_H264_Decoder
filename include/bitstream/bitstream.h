@@ -17,7 +17,7 @@ public:
 
   virtual uint32_t readUE() = 0;
   virtual int32_t readSE() = 0;
-  virtual void resetBuffer(uint8_t* buf, uint32_t bufLen) = 0;
+  virtual void reset(uint8_t* buf, uint32_t bufLen) = 0;
 public:
   virtual ~BitStream() = default;
 };

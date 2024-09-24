@@ -22,8 +22,13 @@ enum class NalUnitTypeEnum {
   END_OF_STREAM = 11,
   FILLER_DATA = 12,
   SPS_EXT = 13,
-  RESERVED = 14, // 14-18 and 20-23
+  PREFIX_NAL_UNIT = 14,
+  SUBSET_SPS = 15,
+  DPS = 16,
+  RESERVED = 17,// 17-18;22-23
   CODED_SLICE_AUX = 19,
+  CODED_SLICE_EXT = 20,
+  CODED_SLICE_EXT_DVC = 21,
 };
 
 class NalUnitTypeUtil {

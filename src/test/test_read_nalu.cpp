@@ -22,7 +22,7 @@ uint64_t getFileSize(const char* fileName) {
 }
 
 std::list<Nalu*> getReadedNalus(std::string_view fileName) {
-  AnnexbReader reader(fileName);
+  NaluReader&& reader = AnnexbReader (fileName);
   if (!reader.open()) {
     fprintf(stderr, "Failed to open file %s\n", fileName.data());
     throw std::runtime_error("Failed to open file");

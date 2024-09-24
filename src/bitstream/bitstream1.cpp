@@ -68,13 +68,12 @@ void BitStream1::backwardN(uint8_t n) {
   }
 }
 
-void BitStream1::resetBuffer(uint8_t* buf, uint32_t bufLen) {
+void BitStream1::reset(uint8_t* buf, uint32_t bufLen) {
   this->buf = buf;
   this->bufLen = bufLen;
   byteNow = buf;
   bitOffset = 0;
 }
-
 uint32_t BitStream1::readUE() {
   uint32_t leadingZeroBits = 0;
   while (readBit1() == 0) ++leadingZeroBits;
